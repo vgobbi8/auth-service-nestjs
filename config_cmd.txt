@@ -1,0 +1,70 @@
+# 🧾 Auth Microservice Setup Guide (NestJS + Prisma + Docker)
+
+This guide documents all the commands and setup steps used to create a production-ready Auth microservice.
+
+## 📁 Project Initialization
+npm install -g @nestjs/cli
+nest new auth-service
+
+## 📦 Install Dependencies
+npm install @prisma/client
+npm install -D prisma
+npm install bcrypt
+npm install @nestjs/config
+npm install class-validator class-transformer
+npm install @nestjs/jwt passport-jwt passport
+npm install nodemailer
+
+## 🔧 Prisma Setup
+npx prisma init
+
+Then update `prisma/schema.prisma` with your User model and run the first migration:
+npx prisma migrate dev --name add_user_model
+
+## 🐳 Docker Manual Workflow (Optional)
+### Build Image
+docker build -t auth-service-prod .
+
+### Run PostgreSQL and App Containers Manually
+docker run -d \
+  --name auth_postgres \
+  -e POSTGRES_USER=postgres \
+  -e POSTGRES_PASSWORD=postgres \
+  -e POSTGRES_DB=authdb \
+  -p 5432:5432 \
+  postgres:16
+
+docker run -d \
+  --name auth_service \
+  --env-file .env.production \
+  -p 3000:3000 \
+  auth-service-prod
+
+## 🔄 Run Prisma Migration Inside Container
+docker exec -it auth_service sh
+npx prisma migrate dev --name add_user_model
+
+## 🧪 Check Environment Variables Inside Container
+docker exec -it auth_service sh
+echo $DATABASE_URL
+
+## 🧱 Docker Compose Workflow (Recommended)
+docker compose up -d --build
+docker compose down
+
+## 🧹 Rebuild and Cleanup
+docker stop auth_service auth_postgres
+docker rm auth_service auth_postgres
+docker image prune -f
+
+## 🧭 Optional: PostgreSQL CLI Inside Container
+docker exec -it auth_service sh
+apk add --no-cache postgresql-client
+psql -h auth_postgres -U postgres -d authdb
+
+## 🛡️ Security Tip
+Never commit `.env` files. Instead:
+- Add `.env`, `.env.*` to `.gitignore`
+- Use `.env.example` for public documentation
+
+✅ You’re now running a secure, Dockerized, and production-ready authentication microservice!
