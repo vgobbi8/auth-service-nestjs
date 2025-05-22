@@ -1,11 +1,15 @@
 services:
   auth-service:
-    build:
+   build:
       context: .
       dockerfile: Dockerfile.dev
-    command: npm run start:dev
-    volumes:
-      - .:/app
-      - /app/node_modules
-    environment:
-      - NODE_ENV=development
+   ports:
+      - "3000:3000"
+   volumes:
+     - .:/app
+     - /app/node_modules
+   environment:
+     - JWT_SECRET=${JWT_SECRET}
+     - DATABASE_URL=${DATABASE_URL}
+   command: npm run start:dev
+

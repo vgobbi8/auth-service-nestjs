@@ -1,21 +1,18 @@
 FROM node:20-alpine
-#Create app directory
 
 WORKDIR /app
 
-#Install app dependencies
-COPY package*.json
+# Copy only package info first
+COPY package*.json ./
 
+# Install dependencies
 RUN npm install
 
-# Install nodemon globally
+# Install dev tools
+RUN npm install -D ts-node typescript nodemon
 
-RUN npm install -g nodemon
-
-# Copy app source code
-
+# Copy source
 COPY . .
 
-#Use nodemon for hot reload
-
-CMD ["nodemon", "--legacy-watch", "src/main.ts"]
+# Default command: use ts-node with nodemon
+CMD ["npx", "nodemon", "--legacy-watch", "--exec", "npx ts-node", "src/main.ts"]
