@@ -1,15 +1,16 @@
-services:
-  auth-service:
-   build:
-      context: .
-      dockerfile: Dockerfile.dev
-   ports:
-      - "3000:3000"
-   volumes:
-     - .:/app
-     - /app/node_modules
-   environment:
-     - JWT_SECRET=${JWT_SECRET}
-     - DATABASE_URL=${DATABASE_URL}
-   command: npm run start:dev
+# services:
+#   auth-service:
+#    build:
+#       context: .
+#       dockerfile: Dockerfile.dev
+#    ports:
+#       - "3000:3000"
+#    volumes:
+#       - ./src:/app/src   # Mount only the source code
+#       - /app/node_modules # Avoid overwriting node_modules
+#       - ./prisma:/app/prisma # Optional: mount just Prisma schema
+#    environment:
+#      - JWT_SECRET=${JWT_SECRET}
+#      - DATABASE_URL=${DATABASE_URL}
+#    command: npm run start:dev
 

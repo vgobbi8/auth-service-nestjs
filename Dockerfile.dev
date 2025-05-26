@@ -14,5 +14,8 @@ RUN npm install -D ts-node typescript nodemon
 # Copy source
 COPY . .
 
+# Generate Prisma Client (AFTER npm install)
+RUN npx prisma generate
+
 # Default command: use ts-node with nodemon
 CMD ["npx", "nodemon", "--legacy-watch", "--exec", "npx ts-node", "src/main.ts"]

@@ -1,26 +1,18 @@
-version: "3.9"
-services:
-  postgres:
-    image: postgres:16
-    container_name: auth_postgres
-    restart: always
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
-    ports:
-    - '5432:5432'
-    volumes:
-      - pgdata:/var/lib/postgresql/data
+include: 
+  - docker-compose.postgres.yml
+services: 
   auth-service:
     build: .
     container_name: auth_service
     ports:
       - '3000:3000'
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
+    networks:
+      - prisma-network
     environment:
       DATABASE_URL: ${DATABASE_URL}
       JWT_SECRET: ${JWT_SECRET}
-volumes:
-  pgdata:
+    command: sh -c "npx prisma migrate deploy && node dist/main.js"  
+ 
